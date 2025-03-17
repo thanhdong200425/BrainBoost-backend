@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'api' => [
+            'driver' => 'sanctum', // Specify the way that Laravel will use to authenticate user
+            'provider' => 'users', // Specify where Laravel can use to fetch records when authenticating
+        ]
     ],
 
     /*
