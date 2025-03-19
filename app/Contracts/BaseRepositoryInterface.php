@@ -8,4 +8,5 @@ interface BaseRepositoryInterface
     public function delete($id);
     public function update($id, $newData);
     public function get($id);
+
 }

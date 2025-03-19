@@ -10,7 +10,6 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
     /**
@@ -22,7 +21,7 @@ class User extends Authenticatable
         'id',
         'username',
         'email',
-        'hashed_password',
+        'password',
         "avatar_url"
     ];
 
@@ -32,7 +31,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $hidden = [
-        'hashed_password',
+        'password',
     ];
     public function roles()
     {
