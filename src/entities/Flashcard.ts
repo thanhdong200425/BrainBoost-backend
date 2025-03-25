@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Deck } from "./Deck";
+import { Deck } from "./index";
 
 @Entity("flashcards")
 export class Flashcard {
