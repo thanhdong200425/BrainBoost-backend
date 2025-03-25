@@ -22,6 +22,6 @@ export class Class {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
     })
-    @JoinColumn({ name: "authorId" })
+    @JoinColumn({ name: "author_id" })
     author!: User;
 }

@@ -1,45 +1,37 @@
-import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn
-} from "typeorm";
-import {Deck} from "./Deck";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Deck } from "./Deck";
 
-@Entity('Flashcard')
+@Entity("flashcards")
 export class Flashcard {
-    @PrimaryGeneratedColumn('increment')
+    @PrimaryGeneratedColumn("increment")
     id!: number;
 
-    @Column({name: "front_text", type: 'text'})
-    frontText!: string
+    @Column({ name: "front_text", type: "text" })
+    frontText!: string;
 
-    @Column({name: "back_text", type: 'text'})
-    backText!: string
+    @Column({ name: "back_text", type: "text" })
+    backText!: string;
 
-    @Column({name: 'image_url', type: 'text', nullable: true})
-    imageUrl?: string
+    @Column({ name: "image_url", type: "text", nullable: true })
+    imageUrl?: string;
 
-    @Column({name: "audio_url", type: 'text', nullable: true})
-    audioUrl?: string
+    @Column({ name: "audio_url", type: "text", nullable: true })
+    audioUrl?: string;
 
-    @Column({type: "text", nullable: true})
-    description?: string
+    @Column({ type: "text", nullable: true })
+    description?: string;
 
-    @CreateDateColumn({name: 'created_at'})
-    createdAt!: Date
+    @CreateDateColumn({ name: "created_at" })
+    createdAt!: Date;
 
-    @UpdateDateColumn({name: 'updated_at'})
-    updatedAt!: Date
+    @UpdateDateColumn({ name: "updated_at" })
+    updatedAt!: Date;
 
     // @ts-ignore
-    @ManyToOne(() => Deck, (deck: Deck) => Deck.id, {
+    @ManyToOne(() => Deck, (deck: Deck) => deck.id, {
         onDelete: "CASCADE",
-        onUpdate: "CASCADE"
+        onUpdate: "CASCADE",
     })
-    @JoinColumn({name: "deckId"})
-    deck!: Deck
+    @JoinColumn({ name: "deck_id" })
+    deck!: Deck;
 }

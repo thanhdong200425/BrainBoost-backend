@@ -1,16 +1,16 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity('roles')
+@Entity("roles")
 export class Role {
-    @PrimaryGeneratedColumn('increment')
-    id!: number
+    @PrimaryGeneratedColumn("increment")
+    id!: number;
 
-    @Column({type: "varchar"})
-    name!: string
+    @Column({ type: "varchar" })
+    name!: string;
 
-    @CreateDateColumn({name: "createdAt"})
-    createdAt!: Date
+    @CreateDateColumn({ name: "created_at" })
+    createdAt!: Date;
 
-    @UpdateDateColumn({name: "updatedAt"})
-    updatedAt!: Date
+    @UpdateDateColumn({ name: "updated_at" })
+    updatedAt!: Date;
 }
