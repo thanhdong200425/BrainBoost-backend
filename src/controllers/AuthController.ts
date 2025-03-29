@@ -28,10 +28,10 @@ export class AuthController {
             }
 
             const hashedPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS!));
-            await this.userRepository.create({ email, password: hashedPassword });
+            const newUser = await this.userRepository.create({ email, password: hashedPassword });
             const accessToken = jwt.sign({ email }, process.env.JWT_SECRET!, { expiresIn: "7d" });
 
-            res.status(200).json({ message: "User created successfully", token: accessToken });
+            res.status(200).json({ message: "User created successfully", token: accessToken, user: newUser });
         } catch (error) {
             console.error("Error signing up user", error);
             res.status(500).json({ message: "Oops! Sorry, we have some problems" });
