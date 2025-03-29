@@ -8,16 +8,9 @@ import { authRouter } from "./routes";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = parseInt(process.env.PORT!) || 3000;
 
-app.use(
-    cors({
-        origin: true,
-        credentials: true,
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"],
-    })
-);
+app.use(cors());
 // @ts-ignore
 // app.use(checkOrigin);
 app.use(express.json());
@@ -33,7 +26,7 @@ app.get("/", (req: Request, res: Response) => {
 const startServer = async () => {
     try {
         await AppDataSource.initialize();
-        app.listen(port, () => {
+        app.listen(port, "0.0.0.0", () => {
             console.log("Server is running at: " + port);
         });
     } catch (error) {
