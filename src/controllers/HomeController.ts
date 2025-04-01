@@ -1,8 +1,6 @@
-// controllers/HomeController.ts
 import { Request, Response } from 'express';
 import { DeckRepository } from '../repositories/DeckRepository';
-
-const deckRepository = new DeckRepository();
+import { AuthenticatedRequest } from '../middlewares/authMiddleware';
 
 export class HomeController {
     private deckRepository: DeckRepository;
@@ -11,15 +9,19 @@ export class HomeController {
         this.deckRepository = new DeckRepository();
     }
 
-    getPublicDecks = async (req: Request, res: Response): Promise<void> => {
+    getPublicDecks = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
             const decks = await this.deckRepository.getPublicDecks(page, limit);
-            res.status(200).json({
+
+            const responseData = {
                 success: true,
                 data: decks,
-            });
+                user: req.user ? { email: req.user.email } : null, // Trả về thông tin user nếu đã đăng nhập
+            };
+
+            res.status(200).json(responseData);
         } catch (error) {
             res.status(500).json({
                 success: false,

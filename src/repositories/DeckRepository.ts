@@ -1,18 +1,20 @@
 import { Repository } from "typeorm";
 import { Deck } from "../entities";
-import { AppDataSource } from "../../ormconfig";
+import { BaseRepository } from "./BaseRepository";
 
-export class DeckRepository {
+export class DeckRepository extends BaseRepository<Deck> {
     private deckRepo: Repository<Deck>;
+
     constructor() {
-        this.deckRepo = AppDataSource.getRepository(Deck)
+        super(Deck);
+        this.deckRepo = this.repository;
     }
 
     async getPublicDecks(page: number = 1, limit: number = 10): Promise<Deck[]> {
         const skip = (page - 1) * limit;
         return this.deckRepo.find({
-            where: { visibility: 'public' },
-            relations: ['author'],
+            where: { visibility: "public" },
+            relations: ["author"],
             select: {
                 id: true,
                 name: true,
