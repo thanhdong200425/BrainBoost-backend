@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { AppDataSource } from "../ormconfig";
 import { checkOrigin } from "./middlewares/checkOrigin";
-import { authRouter } from "./routes";
+import { authRouter, homeRouter } from "./routes";
 
 dotenv.config();
 
@@ -18,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // API routes
 app.use("/auth", authRouter);
+app.use("/api", homeRouter)
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Hello World");
