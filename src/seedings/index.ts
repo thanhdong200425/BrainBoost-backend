@@ -362,64 +362,64 @@
 
 // TEST BY HUY
 // seedings/index.ts
-import { AppDataSource } from "../../ormconfig";
-import { User } from "../entities/User";
-import { Deck } from "../entities/Deck";
-import bcrypt from "bcrypt";
-import dotenv from "dotenv";
+// import { AppDataSource } from "../../ormconfig";
+// import { User } from "../entities/User";
+// import { Deck } from "../entities/Deck";
+// import bcrypt from "bcrypt";
+// import dotenv from "dotenv";
 
-dotenv.config();
+// dotenv.config();
 
-async function seed() {
-    try {
-        // tạo connect database
-        await AppDataSource.initialize();
+// async function seed() {
+//     try {
+//         // tạo connect database
+//         await AppDataSource.initialize();
 
-        const userRepo = AppDataSource.getRepository(User);
-        const deckRepo = AppDataSource.getRepository(Deck);
+//         const userRepo = AppDataSource.getRepository(User);
+//         const deckRepo = AppDataSource.getRepository(Deck);
 
-        // user mẫu
-        const user1 = new User();
-        user1.email = "user1@example.com";
-        user1.username = "user1";
-        user1.password = await bcrypt.hash("password123", parseInt(process.env.SALT_ROUNDS || "10"));
-        await userRepo.save(user1);
+//         // user mẫu
+//         const user1 = new User();
+//         user1.email = "user1@example.com";
+//         user1.username = "user1";
+//         user1.password = await bcrypt.hash("password123", parseInt(process.env.SALT_ROUNDS || "10"));
+//         await userRepo.save(user1);
 
-        const user2 = new User();
-        user2.email = "user2@example.com";
-        user2.username = "user2";
-        user2.password = await bcrypt.hash("password123", parseInt(process.env.SALT_ROUNDS || "10"));
-        await userRepo.save(user2);
+//         const user2 = new User();
+//         user2.email = "user2@example.com";
+//         user2.username = "user2";
+//         user2.password = await bcrypt.hash("password123", parseInt(process.env.SALT_ROUNDS || "10"));
+//         await userRepo.save(user2);
 
-        // deck mẫu
-        const deck1 = new Deck();
-        deck1.name = "Basic English Vocabulary";
-        deck1.description = "A deck for beginners to learn English vocabulary.";
-        deck1.visibility = "public";
-        deck1.author = user1;
-        await deckRepo.save(deck1);
+//         // deck mẫu
+//         const deck1 = new Deck();
+//         deck1.name = "Basic English Vocabulary";
+//         deck1.description = "A deck for beginners to learn English vocabulary.";
+//         deck1.visibility = "public";
+//         deck1.author = user1;
+//         await deckRepo.save(deck1);
 
-        const deck2 = new Deck();
-        deck2.name = "TOEFL Vocabulary";
-        deck2.description = "Advanced vocabulary for TOEFL preparation.";
-        deck2.visibility = "public";
-        deck2.author = user1;
-        await deckRepo.save(deck2);
+//         const deck2 = new Deck();
+//         deck2.name = "TOEFL Vocabulary";
+//         deck2.description = "Advanced vocabulary for TOEFL preparation.";
+//         deck2.visibility = "public";
+//         deck2.author = user1;
+//         await deckRepo.save(deck2);
 
-        const deck3 = new Deck();
-        deck3.name = "My Private Deck";
-        deck3.description = "A private deck for personal use.";
-        deck3.visibility = "private";
-        deck3.author = user2;
-        await deckRepo.save(deck3);
+//         const deck3 = new Deck();
+//         deck3.name = "My Private Deck";
+//         deck3.description = "A private deck for personal use.";
+//         deck3.visibility = "private";
+//         deck3.author = user2;
+//         await deckRepo.save(deck3);
 
-        console.log("Seeding completed successfully!");
-    } catch (error) {
-        console.error("Error during seeding:", error);
-        process.exit(1);
-    } finally {
-        await AppDataSource.destroy();
-    }
-}
+//         console.log("Seeding completed successfully!");
+//     } catch (error) {
+//         console.error("Error during seeding:", error);
+//         process.exit(1);
+//     } finally {
+//         await AppDataSource.destroy();
+//     }
+// }
 
-seed();
+// seed();
