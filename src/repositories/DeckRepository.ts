@@ -3,16 +3,16 @@ import { Deck } from "../entities";
 import { BaseRepository } from "./BaseRepository";
 
 export class DeckRepository extends BaseRepository<Deck> {
-    private deckRepo: Repository<Deck>;
+    private deckRepository: Repository<Deck>;
 
     constructor() {
         super(Deck);
-        this.deckRepo = this.repository;
+        this.deckRepository = this.repository;
     }
 
     async getPublicDecks(page: number = 1, limit: number = 10): Promise<Deck[]> {
         const skip = (page - 1) * limit;
-        return this.deckRepo.find({
+        return this.deckRepository.find({
             where: { visibility: "public" },
             relations: ["author"],
             select: {
