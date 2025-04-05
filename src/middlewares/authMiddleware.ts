@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// dnghia interface AuthenticatedRequest ở đây để sử dụng chung
 export interface AuthenticatedRequest extends Request {
     user?: { email: string };
 }
@@ -14,7 +13,7 @@ export const authMiddleware = (
     res: Response,
     next: NextFunction
 ): void => {
-    const token = req.headers.authorization?.split(" ")[1]; // get token từ header: "Bearer <token>"
+    const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
         res.status(401).json({
@@ -29,7 +28,7 @@ export const authMiddleware = (
             token,
             process.env.JWT_SECRET || "your_jwt_secret"
         ) as { email: string };
-        req.user = decoded; // gán thông tin user email vào req.user
+        req.user = decoded;
         next();
     } catch (error) {
         res.status(401).json({
