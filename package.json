@@ -11,7 +11,7 @@
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:create": "typeorm migration:create src/migrations/$npm_config_name",
     "migration:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d ormconfig.ts",
-    "seed": "ts-node src/seedings/index.ts"
+    "seed": "ts-node src/seeds/seed.ts"
   },
   "author": "Thanh Dong",
   "license": "ISC",

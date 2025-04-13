@@ -1,6 +1,6 @@
-import { Router } from 'express';
-import { HomeController } from '../controllers/HomeController';
-import { authMiddleware } from '../middlewares/authMiddleware';
+import { Router } from "express";
+import { HomeController } from "../controllers/HomeController";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
 const homeController = new HomeController();

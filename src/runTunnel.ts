@@ -16,7 +16,6 @@ const startTunnel = async (port: number) => {
         console.log("Tunnel is running at: " + connect);
     } catch (error) {
         console.error("Error connecting to tunnel", error);
-        // Don't exit the process, just log the error
         console.log("Continuing without tunnel...");
     }
 };
