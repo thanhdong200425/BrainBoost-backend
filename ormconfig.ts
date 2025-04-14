@@ -7,7 +7,7 @@ export const AppDataSource = new DataSource({
   username: "postgres",
   password: "dong",
   database: "brainboost",
-  synchronize: false,
+  synchronize: true,
   logging: true,
   entities: ["src/entities/*.ts"],
   migrations: ["src/migrations/*.ts"],
