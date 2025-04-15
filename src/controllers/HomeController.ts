@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { DeckRepository } from "../repositories/DeckRepository";
-import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import { Request, Response } from 'express';
+import { DeckRepository } from '../repositories/DeckRepository';
+import { AuthenticatedRequest } from '../middlewares/authMiddleware';
 
 export class HomeController {
     private deckRepository: DeckRepository;
@@ -25,7 +25,7 @@ export class HomeController {
         } catch (error) {
             res.status(500).json({
                 success: false,
-                message: "Error fetching decks",
+                message: 'Error fetching decks',
                 error: error,
             });
         }
