@@ -1,6 +1,6 @@
-import { Repository } from "typeorm";
-import { Deck } from "../entities";
-import { BaseRepository } from "./BaseRepository";
+import { Repository } from 'typeorm';
+import { Deck } from '../entities';
+import { BaseRepository } from './BaseRepository';
 
 export class DeckRepository extends BaseRepository<Deck> {
     private deckRepository: Repository<Deck>;
@@ -13,8 +13,8 @@ export class DeckRepository extends BaseRepository<Deck> {
     async getPublicDecks(page: number = 1, limit: number = 10): Promise<Deck[]> {
         const skip = (page - 1) * limit;
         return this.deckRepository.find({
-            where: { visibility: "public" },
-            relations: ["author"],
+            where: { visibility: 'public' },
+            relations: ['author'],
             select: {
                 id: true,
                 name: true,

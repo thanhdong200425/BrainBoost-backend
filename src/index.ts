@@ -1,9 +1,9 @@
-import express, { Request, Response } from "express";
-import dotenv from "dotenv";
-import cors from "cors";
-import { AppDataSource } from "../ormconfig";
-import { checkOrigin } from "./middlewares/checkOrigin";
-import { authRouter, homeRouter } from "./routes";
+import express, { Request, Response } from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import { AppDataSource } from '../ormconfig';
+import { authRouter, homeRouter } from './routes';
+import { setupSwagger } from './swagger/swagger';
 
 dotenv.config();
 
@@ -16,22 +16,28 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// API routes
-app.use("/auth", authRouter);
-app.use("/api", homeRouter)
+// Setup Swagger
+setupSwagger(app);
 
-app.get("/", (req: Request, res: Response) => {
-    res.send("Hello World");
+// API routes
+app.use('/auth', authRouter);
+app.use('/api', homeRouter);
+
+app.get('/', (req: Request, res: Response) => {
+    res.send('Hello World');
 });
 
 const startServer = async () => {
     try {
         await AppDataSource.initialize();
-        app.listen(port, "0.0.0.0", () => {
-            console.log("Server is running at: " + port);
+        app.listen(port, '0.0.0.0', () => {
+            console.log('Server is running at: ' + port);
+            console.log(
+                'Swagger documentation available at: http://localhost:' + port + '/api-docs'
+            );
         });
     } catch (error) {
-        console.error("Error connecting to database", error);
+        console.error('Error connecting to database', error);
         process.exit(1);
     }
 };

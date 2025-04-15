@@ -18,7 +18,6 @@ export class HomeController {
             const responseData = {
                 success: true,
                 data: decks,
-                user: req.user ? { email: req.user.email } : null, // Trả về thông tin user nếu đã đăng nhập
             };
 
             res.status(200).json(responseData);
