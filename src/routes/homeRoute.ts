@@ -6,28 +6,16 @@ const router = Router();
 const homeController = new HomeController();
 /**
  * @swagger
- * /api/home/decks:
+ * /api/home:
  *   get:
- *     summary: Get public decks
+ *     summary: Get decks, folders and classes for an authenticated user
  *     tags: [Decks]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Page number for pagination
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: Number of decks per page
+ *
  *     responses:
  *       200:
- *         description: List of public decks retrieved successfully
+ *         description: A list of public decks retrieved successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -35,6 +23,7 @@ const homeController = new HomeController();
  *               properties:
  *                 success:
  *                   type: boolean
+ *                   example: true
  *                 data:
  *                   type: array
  *                   items:
@@ -42,12 +31,16 @@ const homeController = new HomeController();
  *                     properties:
  *                       id:
  *                         type: string
+ *                         format: uuid
  *                       name:
  *                         type: string
  *                       description:
  *                         type: string
+ *                         nullable: true
  *                       visibility:
  *                         type: string
+ *                         enum: [public, private] # Assuming visibility enum
+ *                         example: public
  *                       createdAt:
  *                         type: string
  *                         format: date-time
@@ -56,13 +49,27 @@ const homeController = new HomeController();
  *                         properties:
  *                           id:
  *                             type: string
+ *                             format: uuid
  *                           username:
  *                             type: string
+ *                 pagination: # Added pagination details to response
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     totalItems:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *       400:
+ *         description: Bad Request - Invalid query parameters (e.g., non-integer page/limit)
  *       401:
- *         description: Unauthorized - Invalid or missing token
+ *         description: Unauthorized - Invalid or missing authentication token
  *       500:
- *         description: Server error
+ *         description: Internal Server Error
  */
-router.get('/home/decks', authMiddleware, homeController.getDecks);
+router.get('/home', authMiddleware, homeController.getResourcesForUser);
 
 export default router;
