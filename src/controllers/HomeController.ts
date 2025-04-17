@@ -9,23 +9,21 @@ export class HomeController {
         this.deckRepository = new DeckRepository();
     }
 
-    getPublicDecks = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    getDecks = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 10;
-            const decks = await this.deckRepository.getPublicDecks(page, limit);
-
-            const responseData = {
-                success: true,
-                data: decks,
-            };
-
-            res.status(200).json(responseData);
+            const userEmail = req.user?.email;
+            if (!userEmail) {
+                res.status(401).json({ message: 'Unauthorized' });
+                return;
+            }
+            const foundDecks = await this.deckRepository.findByEmail(userEmail);
+            res.status(200).json({
+                data: foundDecks,
+            });
         } catch (error) {
+            console.log('Error fetching decks:', error);
             res.status(500).json({
-                success: false,
-                message: 'Error fetching decks',
-                error: error,
+                message: error || 'Internal server error',
             });
         }
     };

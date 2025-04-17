@@ -30,4 +30,15 @@ export class DeckRepository extends BaseRepository<Deck> {
             take: limit,
         });
     }
+
+    async findByEmail(email: string): Promise<Deck[]> {
+        return this.deckRepository.find({
+            relations: ['author'],
+            where: {
+                author: {
+                    email: email,
+                },
+            },
+        });
+    }
 }

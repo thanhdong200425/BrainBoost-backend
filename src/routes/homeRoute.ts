@@ -63,6 +63,6 @@ const homeController = new HomeController();
  *       500:
  *         description: Server error
  */
-router.get('/home/decks', authMiddleware, homeController.getPublicDecks);
+router.get('/home/decks', authMiddleware, homeController.getDecks);
 
 export default router;
