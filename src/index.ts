@@ -4,6 +4,7 @@ import cors from "cors";
 import { AppDataSource } from "../ormconfig";
 import { checkOrigin } from "./middlewares/checkOrigin";
 import { authRouter, homeRouter } from "./routes";
+import "reflect-metadata";
 
 dotenv.config();
 
