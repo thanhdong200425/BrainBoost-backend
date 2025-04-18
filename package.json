@@ -5,13 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"npm run tunnel\" \"nodemon src/index.ts\"",
-    "dev": "concurrently \"npm start\" \"npm run tunnel\"",
-    "tunnel": "nodemon src/runTunnel.ts",
+    "start": "nodemon src/index.ts",
+    "dev": "nodemon src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:create": "typeorm migration:create src/migrations/$npm_config_name",
     "migration:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d ormconfig.ts",
-    "seed": "ts-node src/seedings/index.ts"
+    "seed": "ts-node src/seeds/seed.ts"
   },
   "author": "Thanh Dong",
   "license": "ISC",
@@ -23,7 +22,10 @@
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.13.11",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "nodemon": "^3.1.9",
+    "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.2"
@@ -38,9 +40,10 @@
     "express": "^4.21.2",
     "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
-    "ngrok": "^5.0.0-beta.2",
     "pg": "^8.14.1",
     "reflect-metadata": "^0.2.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.21"
   }
 }

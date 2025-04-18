@@ -1,32 +1,43 @@
 import { Request, Response } from 'express';
 import { DeckRepository } from '../repositories/DeckRepository';
 import { AuthenticatedRequest } from '../middlewares/authMiddleware';
+import { ClassRepository } from '../repositories/ClassRepository';
+import { FolderRepository } from '../repositories/FolderRepository';
 
 export class HomeController {
     private deckRepository: DeckRepository;
+    private classRepository: ClassRepository;
+    private folderRepository: FolderRepository;
 
     constructor() {
         this.deckRepository = new DeckRepository();
+        this.classRepository = new ClassRepository();
+        this.folderRepository = new FolderRepository();
     }
 
-    getPublicDecks = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    getResourcesForUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 10;
-            const decks = await this.deckRepository.getPublicDecks(page, limit);
-
-            const responseData = {
-                success: true,
-                data: decks,
-                user: req.user ? { email: req.user.email } : null, // Trả về thông tin user nếu đã đăng nhập
-            };
-
-            res.status(200).json(responseData);
+            const userEmail = req.user?.email;
+            if (!userEmail) {
+                res.status(401).json({ message: 'Unauthorized' });
+                return;
+            }
+            const [decks, classes, folders] = await Promise.all([
+                this.deckRepository.findByEmail(userEmail),
+                this.classRepository.findByEmail(userEmail),
+                this.folderRepository.findByEmail(userEmail),
+            ]);
+            res.status(200).json({
+                data: {
+                    decks,
+                    classes,
+                    folders,
+                },
+            });
         } catch (error) {
+            console.log('Error fetching decks:', error);
             res.status(500).json({
-                success: false,
-                message: 'Error fetching decks',
-                error: error,
+                message: error || 'Internal server error',
             });
         }
     };

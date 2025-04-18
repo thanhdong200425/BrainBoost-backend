@@ -1,6 +1,13 @@
-import { DeepPartial, EntityTarget, FindOptionsWhere, ObjectLiteral, Repository } from "typeorm";
-import { AppDataSource } from "../../ormconfig";
-import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
+import {
+    DeepPartial,
+    EntityTarget,
+    FindManyOptions,
+    FindOptionsWhere,
+    ObjectLiteral,
+    Repository,
+} from 'typeorm';
+import { AppDataSource } from '../../ormconfig';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 // Use ObjectLiteral to limit the type of T (Generic types)
 export abstract class BaseRepository<T extends ObjectLiteral> {
@@ -23,6 +30,10 @@ export abstract class BaseRepository<T extends ObjectLiteral> {
         return this.repository.findOneBy(condition);
     }
 
+    async findManyByCondition(condition: FindManyOptions<T>): Promise<T[]> {
+        return this.repository.find(condition);
+    }
+
     async create(data: DeepPartial<T>): Promise<T | unknown> {
         try {
             const entity = this.repository.create(data);
@@ -40,5 +51,21 @@ export abstract class BaseRepository<T extends ObjectLiteral> {
     async delete(id: string | number): Promise<boolean> {
         const result = await this.repository.delete(id);
         return result.affected !== undefined && result.affected !== null && result.affected > 0;
+    }
+
+    async findByRelation(
+        relationName: string,
+        value: { [key: string]: any },
+        options?: Omit<FindManyOptions<T>, 'where'>
+    ): Promise<T[]> {
+        if (!relationName || !value) throw new Error('Relation name and value are required');
+        const foundEntities = await this.repository.find({
+            where: {
+                [relationName]: value,
+            } as FindOptionsWhere<T>,
+            ...options,
+        });
+
+        return foundEntities;
     }
 }
