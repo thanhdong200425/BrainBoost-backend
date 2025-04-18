@@ -15,7 +15,6 @@ export class AuthController {
     signUp = async (req: Request, res: Response): Promise<void> => {
         try {
             const { email, password, confirmPassword } = req.body;
-            console.log('Received sign up request:', req.body);
 
             if (confirmPassword !== password) {
                 res.status(400).json({ message: 'Passwords do not match' });
