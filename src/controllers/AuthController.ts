@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { UserRepository } from '../repositories/UserRepository';
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import argon2 from 'argon2';
 
 dotenv.config();
 
@@ -20,19 +20,24 @@ export class AuthController {
                 res.status(400).json({ message: 'Passwords do not match' });
                 return;
             }
-
             const existingUser = await this.userRepository.findByEmail(email);
             if (existingUser) {
                 res.status(400).json({ message: 'User already exists' });
                 return;
             }
 
-            const hashedPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS!));
-            const newUser = await this.userRepository.create({
+            const jwtSecret = process.env.JWT_SECRET;
+            if (!jwtSecret) {
+                res.status(500).json({ message: 'JWT secret not configured' });
+                return;
+            }
+
+            const hashedPassword = await argon2.hash(password);
+            await this.userRepository.create({
                 email,
                 password: hashedPassword,
             });
-            const accessToken = jwt.sign({ email }, process.env.JWT_SECRET!, {
+            const accessToken = jwt.sign({ email }, jwtSecret, {
                 expiresIn: '7d',
             });
 
@@ -52,7 +57,7 @@ export class AuthController {
                 return;
             }
 
-            const isPasswordValid = await bcrypt.compare(password, user.password);
+            const isPasswordValid = await argon2.verify(user.password, password);
             if (!isPasswordValid) {
                 res.status(400).json({ message: 'Invalid password' });
                 return;

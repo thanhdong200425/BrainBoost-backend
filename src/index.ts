@@ -11,8 +11,6 @@ const app = express();
 const port = parseInt(process.env.PORT!) || 3000;
 
 app.use(cors());
-// @ts-ignore
-// app.use(checkOrigin);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
