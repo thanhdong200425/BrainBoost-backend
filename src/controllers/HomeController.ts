@@ -17,15 +17,15 @@ export class HomeController {
 
     getResourcesForUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const userEmail = req.user?.email;
-            if (!userEmail) {
+            const userId = req.user?.id;
+            if (!userId) {
                 res.status(401).json({ message: 'Unauthorized' });
                 return;
             }
             const [decks, classes, folders] = await Promise.all([
-                this.deckRepository.findByEmail(userEmail),
-                this.classRepository.findByEmail(userEmail),
-                this.folderRepository.findByEmail(userEmail),
+                this.deckRepository.findByUserId(userId),
+                this.classRepository.findByUserId(userId),
+                this.folderRepository.findByUserId(userId),
             ]);
             res.status(200).json({
                 data: {
