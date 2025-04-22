@@ -130,10 +130,6 @@ router.post('/decks', authMiddleware, (req: Request, res: Response) =>
  *     responses:
  *       200:
  *         description: User profile retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
  *       401:
  *         description: Unauthorized
  *       404:
