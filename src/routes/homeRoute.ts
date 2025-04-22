@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { HomeController } from '../controllers/HomeController';
-import { authMiddleware } from '../middlewares/authMiddleware';
+import { authMiddleware, AuthenticatedRequest } from '../middlewares/authMiddleware';
 import { DeckController } from '../controllers/DeckController';
+import { Request, Response } from 'express';
 
 const router = Router();
 const homeController = new HomeController();
@@ -26,7 +27,9 @@ const deckController = new DeckController();
  *       500:
  *         description: Internal Server Error
  */
-router.get('/home', authMiddleware, homeController.getResourcesForUser);
+router.get('/home', authMiddleware, (req: Request, res: Response) =>
+    homeController.getResourcesForUser(req as AuthenticatedRequest, res)
+);
 
 /**
  * @swagger
@@ -44,7 +47,9 @@ router.get('/home', authMiddleware, homeController.getResourcesForUser);
  *       500:
  *         description: Internal Server Error
  */
-router.get('/decks', authMiddleware, deckController.getDecks);
+router.get('/decks', authMiddleware, (req: Request, res: Response) =>
+    deckController.getDecks(req as AuthenticatedRequest, res)
+);
 
 /**
  * @swagger
@@ -71,6 +76,73 @@ router.get('/decks', authMiddleware, deckController.getDecks);
  *       500:
  *         description: Internal Server Error
  */
-router.get('/decks/:id', authMiddleware, deckController.getDeckById);
+router.get('/decks/:id', authMiddleware, (req: Request, res: Response) =>
+    deckController.getDeckById(req as AuthenticatedRequest, res)
+);
+
+/**
+ * @swagger
+ * /api/decks:
+ *   post:
+ *     summary: Create a new deck for the authenticated user
+ *     tags: [Decks]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - description
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The name of the deck
+ *               description:
+ *                 type: string
+ *                 description: Description of the deck
+ *               visibility:
+ *                 type: string
+ *                 enum: [private, public]
+ *                 default: public
+ *                 description: Visibility of the deck
+ *     responses:
+ *       200:
+ *         description: Deck created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     visibility:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: Bad Request - Missing required fields
+ *       401:
+ *         description: Unauthorized - Invalid or missing authentication token
+ *       500:
+ *         description: Internal Server Error
+ */
+router.post('/decks', authMiddleware, (req: Request, res: Response) =>
+    deckController.addDeck(req as AuthenticatedRequest, res)
+);
 
 export default router;

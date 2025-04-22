@@ -5,14 +5,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export interface AuthenticatedRequest extends Request {
-    user?: { id: number; email: string };
+    user: { id: number; email: string };
 }
 
-export const authMiddleware = (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-): void => {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
@@ -35,7 +31,7 @@ export const authMiddleware = (
             id: number;
             email: string;
         };
-        req.user = { id: decoded.id, email: decoded.email };
+        (req as AuthenticatedRequest).user = { id: decoded.id, email: decoded.email };
         next();
     } catch (error) {
         res.status(401).json({

@@ -13,11 +13,7 @@ export class DeckController {
 
     getDecks = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const userId = req.user?.id;
-            if (!userId) {
-                res.status(401).json({ message: 'Unauthorized' });
-                return;
-            }
+            const userId = req.user.id;
 
             const decks = await this.deckRepository.findByUserId(userId, 'all');
             res.status(200).json({
@@ -31,7 +27,7 @@ export class DeckController {
         }
     };
 
-    getDeckById = async (req: Request, res: Response): Promise<void> => {
+    getDeckById = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             const deckId = req.params?.id;
             if (!deckId) {
@@ -57,5 +53,30 @@ export class DeckController {
             console.error('Error getDeckById(): ', error);
             res.status(500).json({ message: 'Oops! Sorry, we have some problems' });
         }
+    };
+
+    addDeck = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        const userId = req.user.id;
+
+        const { name, description } = req.body;
+        if (!name || !description) {
+            res.status(400).json({ message: 'Name and description are required' });
+            return;
+        }
+        const newDeck = await this.deckRepository.create({
+            name,
+            description,
+            author: {
+                id: userId,
+            },
+        });
+
+        if (!newDeck) {
+            res.status(500).json({ message: 'Error creating deck' });
+            return;
+        }
+        res.status(200).json({
+            data: newDeck,
+        });
     };
 }
