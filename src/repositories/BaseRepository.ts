@@ -34,12 +34,12 @@ export abstract class BaseRepository<T extends ObjectLiteral> {
         return this.repository.find(condition);
     }
 
-    async create(data: DeepPartial<T>): Promise<T | unknown> {
+    async create(data: DeepPartial<T>): Promise<T> {
         try {
             const entity = this.repository.create(data);
             return this.repository.save(entity);
         } catch (error) {
-            return error;
+            throw new Error(`Error creating entity: ${error}`);
         }
     }
 

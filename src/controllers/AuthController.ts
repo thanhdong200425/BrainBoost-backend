@@ -33,11 +33,11 @@ export class AuthController {
             }
 
             const hashedPassword = await argon2.hash(password);
-            await this.userRepository.create({
+            const newUser = await this.userRepository.create({
                 email,
                 password: hashedPassword,
             });
-            const accessToken = jwt.sign({ email }, jwtSecret, {
+            const accessToken = jwt.sign({ id: newUser.id, email: newUser.email }, jwtSecret, {
                 expiresIn: '7d',
             });
 
@@ -63,9 +63,13 @@ export class AuthController {
                 return;
             }
 
-            const accessToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET!, {
-                expiresIn: '7d',
-            });
+            const accessToken = jwt.sign(
+                { id: user.id, email: user.email },
+                process.env.JWT_SECRET!,
+                {
+                    expiresIn: '7d',
+                }
+            );
             res.status(200).json({ message: 'User signed in successfully', token: accessToken });
         } catch (error) {
             console.error('Error signing in user', error);
