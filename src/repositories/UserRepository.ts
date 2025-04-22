@@ -13,4 +13,11 @@ export class UserRepository extends BaseRepository<User> {
     async findByUsername(username: string): Promise<User | null> {
         return this.findByCondition({ username });
     }
+
+    async updateByEmail(email: string, data: Partial<User>): Promise<User | null> {
+        const user = await this.findByEmail(email);
+        if (!user) return null;
+        await this.update(user.id, data);
+        return this.findByEmail(email); 
+    }
 }
