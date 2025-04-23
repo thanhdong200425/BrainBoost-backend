@@ -28,10 +28,10 @@ export class ProfileController {
 
     updateProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const email = req.user.email;
+            const userId = req.user.id;
             const { username, dob, avatar_url } = req.body;
 
-            const updatedUser = await this.userRepository.updateByEmail(email, {
+            const updatedUser = await this.userRepository.updateById(userId, {
                 username,
                 dob,
                 avatar_url,
