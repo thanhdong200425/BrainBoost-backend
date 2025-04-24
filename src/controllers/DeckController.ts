@@ -79,4 +79,135 @@ export class DeckController {
             data: newDeck,
         });
     };
+
+    addFlashcards = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        try {
+            const deckId = req.params?.id;
+            if (!deckId) {
+                res.status(400).json({ message: 'Deck ID is required' });
+                return;
+            }
+
+            const { flashcards } = req.body;
+            if (!flashcards || !Array.isArray(flashcards) || flashcards.length === 0) {
+                res.status(400).json({ message: 'Valid flashcards array is required' });
+                return;
+            }
+
+            const deck = await this.deckRepository.findById(deckId);
+            if (!deck) {
+                res.status(404).json({ message: 'Deck not found' });
+                return;
+            }
+
+            const flashcardsToSave = flashcards.map((card) => ({
+                frontText: card.term,
+                backText: card.definition,
+                deck: deck,
+            }));
+
+            const savedFlashcards = await this.flashcardRepository.createMany(flashcardsToSave);
+
+            res.status(200).json({
+                data: savedFlashcards,
+            });
+        } catch (error) {
+            console.error('Error adding flashcards:', error);
+            res.status(500).json({ message: 'Error adding flashcards to deck' });
+        }
+    };
+
+    updateDeck = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        try {
+            const deckId = req.params?.id;
+            if (!deckId) {
+                res.status(400).json({ message: 'Deck ID is required' });
+                return;
+            }
+
+            // Verify deck exists and belongs to user
+            const existingDeck = await this.deckRepository.findById(deckId);
+            if (!existingDeck) {
+                res.status(404).json({ message: 'Deck not found' });
+                return;
+            }
+
+            // Check if the user owns the deck
+            if (existingDeck.author?.id !== req.user.id) {
+                res.status(403).json({ message: 'You do not have permission to update this deck' });
+                return;
+            }
+
+            const { name, description, visibility } = req.body;
+            if (!name || !description) {
+                res.status(400).json({ message: 'Name and description are required' });
+                return;
+            }
+
+            // Update the deck
+            const updatedDeck = await this.deckRepository.update(deckId, {
+                name,
+                description,
+                visibility: visibility || existingDeck.visibility,
+            });
+
+            res.status(200).json({
+                data: updatedDeck,
+            });
+        } catch (error) {
+            console.error('Error updating deck:', error);
+            res.status(500).json({ message: 'Error updating deck' });
+        }
+    };
+
+    updateFlashcard = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        try {
+            const flashcardId = req.params?.id;
+            if (!flashcardId) {
+                res.status(400).json({ message: 'Flashcard ID is required' });
+                return;
+            }
+
+            const { term, definition } = req.body;
+            if (!term || !definition) {
+                res.status(400).json({ message: 'Term and definition are required' });
+                return;
+            }
+
+            // Find the flashcard
+            const existingFlashcard = await this.flashcardRepository.findById(flashcardId);
+            if (!existingFlashcard) {
+                res.status(404).json({ message: 'Flashcard not found' });
+                return;
+            }
+
+            // Find the deck to verify ownership
+            const deck = await this.deckRepository.findById(existingFlashcard.deck.id);
+            if (!deck) {
+                res.status(404).json({ message: 'Associated deck not found' });
+                return;
+            }
+
+            // Check if the user owns the deck that contains this flashcard
+            if (deck.author?.id !== req.user.id) {
+                res.status(403).json({
+                    message: 'You do not have permission to update this flashcard',
+                });
+                return;
+            }
+
+            // Update the flashcard
+            const updatedFlashcard = await this.flashcardRepository.update(flashcardId, {
+                frontText: term,
+                backText: definition,
+            });
+
+            res.status(200).json({
+                data: updatedFlashcard,
+            });
+        } catch (error) {
+            console.error('Error updating flashcard:', error);
+            res.status(500).json({ message: 'Error updating flashcard' });
+        }
+    };
 }

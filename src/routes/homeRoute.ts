@@ -145,4 +145,160 @@ router.post('/decks', authMiddleware, (req: Request, res: Response) =>
     deckController.addDeck(req as AuthenticatedRequest, res)
 );
 
+/**
+ * @swagger
+ * /api/decks/{id}/flashcards:
+ *   post:
+ *     summary: Add flashcards to a deck
+ *     tags: [Flashcards]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the deck to add flashcards to
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - flashcards
+ *             properties:
+ *               flashcards:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - term
+ *                     - definition
+ *                   properties:
+ *                     term:
+ *                       type: string
+ *                       description: The front text of the flashcard
+ *                     definition:
+ *                       type: string
+ *                       description: The back text of the flashcard
+ *     responses:
+ *       200:
+ *         description: Flashcards added successfully
+ *       400:
+ *         description: Bad Request - Missing required fields or invalid data
+ *       401:
+ *         description: Unauthorized - Invalid or missing authentication token
+ *       404:
+ *         description: Not Found - Deck not found
+ *       500:
+ *         description: Internal Server Error
+ */
+router.post('/decks/:id/flashcards', authMiddleware, (req: Request, res: Response) =>
+    deckController.addFlashcards(req as AuthenticatedRequest, res)
+);
+
+/**
+ * @swagger
+ * /api/decks/{id}:
+ *   put:
+ *     summary: Update an existing deck
+ *     tags: [Decks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the deck to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - description
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The updated name of the deck
+ *               description:
+ *                 type: string
+ *                 description: Updated description of the deck
+ *               visibility:
+ *                 type: string
+ *                 enum: [private, public]
+ *                 description: Updated visibility of the deck
+ *     responses:
+ *       200:
+ *         description: Deck updated successfully
+ *       400:
+ *         description: Bad Request - Missing required fields
+ *       401:
+ *         description: Unauthorized - Invalid or missing authentication token
+ *       403:
+ *         description: Forbidden - User does not have permission to update this deck
+ *       404:
+ *         description: Not Found - Deck not found
+ *       500:
+ *         description: Internal Server Error
+ */
+router.put('/decks/:id', authMiddleware, (req: Request, res: Response) =>
+    deckController.updateDeck(req as AuthenticatedRequest, res)
+);
+
+/**
+ * @swagger
+ * /api/flashcards/{id}:
+ *   put:
+ *     summary: Update an existing flashcard
+ *     tags: [Flashcards]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the flashcard to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - term
+ *               - definition
+ *             properties:
+ *               term:
+ *                 type: string
+ *                 description: The front text of the flashcard
+ *               definition:
+ *                 type: string
+ *                 description: The back text of the flashcard
+ *     responses:
+ *       200:
+ *         description: Flashcard updated successfully
+ *       400:
+ *         description: Bad Request - Missing required fields
+ *       401:
+ *         description: Unauthorized - Invalid or missing authentication token
+ *       403:
+ *         description: Forbidden - User does not have permission to update this flashcard
+ *       404:
+ *         description: Not Found - Flashcard not found
+ *       500:
+ *         description: Internal Server Error
+ */
+router.put('/flashcards/:id', authMiddleware, (req: Request, res: Response) =>
+    deckController.updateFlashcard(req as AuthenticatedRequest, res)
+);
+
 export default router;
