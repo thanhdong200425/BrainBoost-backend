@@ -1,12 +1,13 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { HomeController } from '../controllers/HomeController';
-import { authMiddleware, AuthenticatedRequest } from '../middlewares/authMiddleware';
 import { DeckController } from '../controllers/DeckController';
-import { Request, Response } from 'express';
+import { ProfileController } from '../controllers/ProfileController';
+import { authMiddleware, AuthenticatedRequest } from '../middlewares/authMiddleware';
 
 const router = Router();
 const homeController = new HomeController();
 const deckController = new DeckController();
+const profileController = new ProfileController();
 
 /**
  * @swagger
@@ -16,12 +17,11 @@ const deckController = new DeckController();
  *     tags: [Home]
  *     security:
  *       - bearerAuth: []
- *
  *     responses:
  *       200:
- *         description: A list of public decks, folders and classes retrieved successfully.
+ *         description: A list of public decks, folders, and classes retrieved successfully.
  *       400:
- *         description: Bad Request - Invalid query parameters (e.g., non-integer page/limit)
+ *         description: Bad Request - Invalid query parameters
  *       401:
  *         description: Unauthorized - Invalid or missing authentication token
  *       500:
@@ -55,7 +55,7 @@ router.get('/decks', authMiddleware, (req: Request, res: Response) =>
  * @swagger
  * /api/decks/{id}:
  *   get:
- *     summary: Get a deck and other info of this deck by ID for the authenticated user
+ *     summary: Get a deck and its flashcards by ID
  *     tags: [Decks]
  *     security:
  *       - bearerAuth: []
@@ -68,7 +68,7 @@ router.get('/decks', authMiddleware, (req: Request, res: Response) =>
  *           type: string
  *     responses:
  *       200:
- *         description: A deck object retrieved successfully.
+ *         description: A deck object with flashcards retrieved successfully.
  *       401:
  *         description: Unauthorized - Invalid or missing authentication token
  *       404:
@@ -84,7 +84,7 @@ router.get('/decks/:id', authMiddleware, (req: Request, res: Response) =>
  * @swagger
  * /api/decks:
  *   post:
- *     summary: Create a new deck for the authenticated user
+ *     summary: Create a new deck
  *     tags: [Decks]
  *     security:
  *       - bearerAuth: []
@@ -100,44 +100,18 @@ router.get('/decks/:id', authMiddleware, (req: Request, res: Response) =>
  *             properties:
  *               name:
  *                 type: string
- *                 description: The name of the deck
  *               description:
  *                 type: string
- *                 description: Description of the deck
  *               visibility:
  *                 type: string
  *                 enum: [private, public]
- *                 default: public
- *                 description: Visibility of the deck
  *     responses:
  *       200:
  *         description: Deck created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     name:
- *                       type: string
- *                     description:
- *                       type: string
- *                     visibility:
- *                       type: string
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
  *       400:
- *         description: Bad Request - Missing required fields
+ *         description: Missing required fields
  *       401:
- *         description: Unauthorized - Invalid or missing authentication token
+ *         description: Unauthorized
  *       500:
  *         description: Internal Server Error
  */
@@ -200,6 +174,27 @@ router.post('/decks/:id/flashcards', authMiddleware, (req: Request, res: Respons
 );
 
 /**
+ * /api/profile:
+ *   get:
+ *     summary: Get the authenticated user's profile
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get('/profile', authMiddleware, (req: Request, res: Response) =>
+    profileController.getProfile(req as AuthenticatedRequest, res)
+);
+
+/**
  * @swagger
  * /api/decks/{id}:
  *   put:
@@ -214,6 +209,12 @@ router.post('/decks/:id/flashcards', authMiddleware, (req: Request, res: Respons
  *         description: The ID of the deck to update
  *         schema:
  *           type: string
+ * /api/profile:
+ *   put:
+ *     summary: Update the authenticated user's profile
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -299,6 +300,28 @@ router.put('/decks/:id', authMiddleware, (req: Request, res: Response) =>
  */
 router.put('/flashcards/:id', authMiddleware, (req: Request, res: Response) =>
     deckController.updateFlashcard(req as AuthenticatedRequest, res)
+);
+/**
+ *             properties:
+ *               username:
+ *                 type: string
+ *               dob:
+ *                 type: string
+ *                 format: date
+ *               avatar_url:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal Server Error
+ */
+router.put('/profile', authMiddleware, (req: Request, res: Response) =>
+    profileController.updateProfile(req as AuthenticatedRequest, res)
 );
 
 export default router;
