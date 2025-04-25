@@ -3,6 +3,7 @@ import { HomeController } from '../controllers/HomeController';
 import { DeckController } from '../controllers/DeckController';
 import { ProfileController } from '../controllers/ProfileController';
 import { authMiddleware, AuthenticatedRequest } from '../middlewares/authMiddleware';
+// import { upload } from '../middlewares/uploadMiddleware';
 
 const router = Router();
 const homeController = new HomeController();
@@ -173,8 +174,18 @@ router.get('/profile', authMiddleware, (req: Request, res: Response) =>
  *       500:
  *         description: Internal Server Error
  */
+// router.put(
+//     '/profile',
+//     authMiddleware,
+//     upload.single('avatar'),
+//     (req, res) => profileController.updateProfile(req as any, res)
+// );
 router.put('/profile', authMiddleware, (req: Request, res: Response) =>
     profileController.updateProfile(req as AuthenticatedRequest, res)
+);
+
+router.get('/editProfile', authMiddleware, (req: Request, res: Response) =>
+    profileController.getProfile(req as AuthenticatedRequest, res)
 );
 
 export default router;

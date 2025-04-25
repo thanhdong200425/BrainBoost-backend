@@ -68,4 +68,9 @@ export abstract class BaseRepository<T extends ObjectLiteral> {
 
         return foundEntities;
     }
+
+    // ProfileController
+    async save(entity: T): Promise<T> {
+        return await this.repository.save(entity);
+    }
 }

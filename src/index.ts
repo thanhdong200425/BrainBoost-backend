@@ -4,6 +4,7 @@ import cors from 'cors';
 import { AppDataSource } from '../ormconfig';
 import { authRouter, homeRouter } from './routes';
 import { setupSwagger } from './swagger/swagger';
+import path from 'path'
 
 dotenv.config();
 
@@ -20,6 +21,9 @@ setupSwagger(app);
 // API routes
 app.use('/auth', authRouter);
 app.use('/api', homeRouter);
+
+// Image
+// app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')))
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello World');

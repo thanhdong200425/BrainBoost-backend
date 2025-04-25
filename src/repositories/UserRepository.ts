@@ -18,6 +18,6 @@ export class UserRepository extends BaseRepository<User> {
         const user = await this.findByEmail(email);
         if (!user) return null;
         await this.update(user.id, data);
-        return this.findByEmail(email); 
+        return this.findByEmail(email);
     }
 }
