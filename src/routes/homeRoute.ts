@@ -301,6 +301,34 @@ router.put('/decks/:id', authMiddleware, (req: Request, res: Response) =>
 router.put('/flashcards/:id', authMiddleware, (req: Request, res: Response) =>
     deckController.updateFlashcard(req as AuthenticatedRequest, res)
 );
+
+/**
+ * @swagger
+ * /api/flashcards/{deckId}:
+ *   get:
+ *     summary: Get flashcards by deck ID
+ *     tags: [Flashcards]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: deckId
+ *         in: path
+ *         required: true
+ *         description: The ID of the deck to get flashcards from
+ *     responses:
+ *       200:
+ *         description: Flashcards retrieved successfully
+ *       401:
+ *         description: Unauthorized - Invalid or missing authentication token
+ *       404:
+ *         description: Not Found - Deck not found
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get('/flashcards/:deckId', authMiddleware, (req: Request, res: Response) =>
+    deckController.getFlashcardsById(req as AuthenticatedRequest, res)
+);
+
 /**
  *             properties:
  *               username:

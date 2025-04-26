@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AuthenticatedRequest } from '../middlewares/authMiddleware';
 import { DeckRepository } from '../repositories/DeckRepository';
 import { FlashcardRepository } from '../repositories/FlashcardRepository';
+import { Flashcard } from '../entities';
 
 export class DeckController {
     private deckRepository: DeckRepository;
@@ -208,6 +209,17 @@ export class DeckController {
         } catch (error) {
             console.error('Error updating flashcard:', error);
             res.status(500).json({ message: 'Error updating flashcard' });
+        }
+    };
+
+    getFlashcardsById = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        try {
+            const { deckId } = req.params;
+            const flashcards = await this.flashcardRepository.findByDeckId(deckId, 'all');
+            res.status(200).json({ data: flashcards });
+        } catch (error) {
+            console.error('Error getting flashcards by deck ID:', error);
+            res.status(500).json({ message: 'Error getting flashcards by deck ID' });
         }
     };
 }
