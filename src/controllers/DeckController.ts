@@ -140,10 +140,6 @@ export class DeckController {
             }
 
             const { name, description, visibility } = req.body;
-            if (!name || !description) {
-                res.status(400).json({ message: 'Name and description are required' });
-                return;
-            }
 
             // Update the deck
             const updatedDeck = await this.deckRepository.update(deckId, {
