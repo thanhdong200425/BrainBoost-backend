@@ -352,4 +352,43 @@ router.put('/profile', authMiddleware, (req: Request, res: Response) =>
     profileController.updateProfile(req as AuthenticatedRequest, res)
 );
 
+
+/**
+ * @swagger
+ * /api/change-password:
+ *   put:
+ *     summary: Change the authenticated user's password
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - current_password
+ *               - new_password
+ *             properties:
+ *               current_password:
+ *                 type: string
+ *               new_password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *       400:
+ *         description: Bad Request - Invalid current password or missing fields
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal Server Error
+ */
+router.put('/change-password', authMiddleware, (req: Request, res: Response) =>
+    profileController.changePassword(req as AuthenticatedRequest, res)
+);
+
 export default router;
