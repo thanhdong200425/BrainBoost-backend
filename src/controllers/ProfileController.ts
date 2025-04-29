@@ -52,7 +52,7 @@ export class ProfileController {
 
     changePassword = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const { current_password, new_password, email, userId } = req.body;
+            const { current_password, new_password, userId } = req.body;
 
             if (!current_password || !new_password) {
                 res.status(400).json({ message: 'Current password and new password are required' });
