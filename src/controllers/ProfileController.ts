@@ -59,7 +59,7 @@ export class ProfileController {
                 return;
             }
 
-            const user = await this.userRepository.findByEmail(email);
+            const user = await this.userRepository.findById(userId);
             if (!user) {
                 res.status(404).json({ message: 'User not found' });
                 return;
