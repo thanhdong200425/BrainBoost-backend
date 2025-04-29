@@ -14,10 +14,10 @@ export class UserRepository extends BaseRepository<User> {
         return this.findByCondition({ username });
     }
 
-    async updateByEmail(email: string, data: Partial<User>): Promise<User | null> {
-        const user = await this.findByEmail(email);
+    async updateById(id: number, data: Partial<User>): Promise<User | null> {
+        const user = await this.findById(id);
         if (!user) return null;
         await this.update(user.id, data);
-        return this.findByEmail(email);
+        return this.findById(id);
     }
 }
