@@ -10,6 +10,17 @@ interface AIFlashCardResponse {
     [key: string]: AIFlashCardItem;
 }
 
+interface QuestionAnswerPair {
+    question: string;
+    answer: string;
+}
+
+interface DistractorsResult {
+    question: string;
+    answer: string;
+    distractors: string[];
+}
+
 dotenv.config();
 
 export class AIRepository {
@@ -69,5 +80,78 @@ export class AIRepository {
         }
 
         throw new Error('Unsupported response format from AI server');
+    };
+
+    handleGenerateDistractors = async (question: string, answer: string): Promise<any> => {
+        const payload = {
+            model: process.env.AI_MODEL,
+            prompt: `Generate 3 definitely incorrect and plausible options for the question "${question}" where "${answer}" is the ONLY correct answer.
+                     These options should be wrong but believable enough to serve as distractors in a multiple-choice question.
+                     IMPORTANT: Ensure ALL options are factually INCORRECT and cannot be considered valid answers to the question.
+                     Provide the response as a single JSON array of strings. 
+                     Example format: ["Incorrect Option 1", "Incorrect Option 2", "Incorrect Option 3"]`,
+            stream: false,
+            format: 'json',
+            temperature: 1,
+        };
+
+        try {
+            const response = await axios.post(`${process.env.AI_SERVER_URL}`, payload);
+            const parsedResponse = JSON.parse(response.data?.response);
+            return parsedResponse;
+        } catch (error) {
+            console.error('Error in AIRepository.handleGenerateDistractors:', error);
+            throw new Error('Error communicating with AI server');
+        }
+    };
+
+    handleBatchGenerateDistractors = async (
+        questionAnswerPairs: QuestionAnswerPair[]
+    ): Promise<DistractorsResult[]> => {
+        if (!questionAnswerPairs || questionAnswerPairs.length === 0) {
+            return [];
+        }
+
+        const questionsJson = JSON.stringify(questionAnswerPairs);
+
+        const payload = {
+            model: process.env.AI_MODEL,
+            prompt: `Generate 3 definitely incorrect and plausible options for each of the following question-answer pairs:
+                     ${questionsJson}
+                     
+                     For each question, the provided answer is the ONLY correct answer.
+                     The distractors should be wrong but believable enough to serve as options in multiple-choice questions.
+                     IMPORTANT: Ensure ALL distractors are factually INCORRECT and cannot be considered valid answers to their respective questions.
+                     
+                     Provide the response as a JSON array where each item contains:
+                     1. The original question
+                     2. The correct answer
+                     3. An array of 3 distractors (incorrect options)
+                     
+                     Example format:
+                     response: [
+                       {
+                         "question": "Original question 1",
+                         "answer": "Correct answer 1",
+                         "distractors": ["Incorrect Option 1", "Incorrect Option 2", "Incorrect Option 3"]
+                       },
+                       {
+                         "question": "Original question 2",
+                         "answer": "Correct answer 2",
+                         "distractors": ["Incorrect Option 1", "Incorrect Option 2", "Incorrect Option 3"]
+                       }
+                     ]`,
+            stream: false,
+            format: 'json',
+            temperature: 1,
+        };
+
+        try {
+            const response = await axios.post(`${process.env.AI_SERVER_URL}`, payload);
+            return JSON.parse(response.data?.response || null);
+        } catch (error) {
+            console.error('Error in AIRepository.handleBatchGenerateDistractors:', error);
+            throw new Error('Error communicating with AI server');
+        }
     };
 }

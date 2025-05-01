@@ -35,4 +35,39 @@ export class AIController {
             res.status(500).send('Internal Server Error');
         }
     };
+
+    generateDistractors = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        try {
+            const { id } = req.user;
+            if (!id) {
+                res.status(400).send('User not found');
+                return;
+            }
+            const { questions, answers }: { questions: string[]; answers: string[] } = req.body;
+            if (!questions || !answers || questions.length === 0 || answers.length === 0) {
+                res.status(400).send('Questions and answers are required');
+                return;
+            }
+
+            if (questions.length !== answers.length) {
+                res.status(400).send('Questions and answers arrays must have the same length');
+                return;
+            }
+
+            const questionAnswerPairs = questions.map((question, index) => ({
+                question,
+                answer: answers[index],
+            }));
+
+            let rawResponse =
+                await this.aiRepository.handleBatchGenerateDistractors(questionAnswerPairs);
+
+            res.status(200).json({
+                response: rawResponse,
+            });
+        } catch (error) {
+            console.log('Error getting distractors from ai server: ' + error);
+            res.status(500).send('Internal Server Error');
+        }
+    };
 }
