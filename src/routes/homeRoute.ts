@@ -3,13 +3,11 @@ import { HomeController } from '../controllers/HomeController';
 import { DeckController } from '../controllers/DeckController';
 import { ProfileController } from '../controllers/ProfileController';
 import { authMiddleware, AuthenticatedRequest } from '../middlewares/authMiddleware';
-import { SearchController } from '../controllers/SearchController';
 
 const router = Router();
 const homeController = new HomeController();
 const deckController = new DeckController();
 const profileController = new ProfileController();
-const searchController = new SearchController();
 
 /**
  * @swagger
@@ -354,7 +352,6 @@ router.put('/profile', authMiddleware, (req: Request, res: Response) =>
     profileController.updateProfile(req as AuthenticatedRequest, res)
 );
 
-
 /**
  * @swagger
  * /api/change-password:
@@ -410,7 +407,8 @@ router.put('/change-password', authMiddleware, (req: Request, res: Response) =>
  *           type: string
  *       - name: limit
  *         in: query
- *         description: Number of results to return (default: 10)
+ *         required: false
+ *         description: Number of results to return (default 10)
  *         schema:
  *           type: string
  *     responses:
@@ -427,6 +425,7 @@ router.put('/change-password', authMiddleware, (req: Request, res: Response) =>
  *                     decks:
  *                       type: array
  *                       items:
+ *                         type: object
  *       400:
  *         description: Bad Request - Invalid query parameters
  *       401:
@@ -435,7 +434,7 @@ router.put('/change-password', authMiddleware, (req: Request, res: Response) =>
  *         description: Internal Server Error
  */
 router.get('/search', authMiddleware, (req: Request, res: Response) =>
-    searchController.search(req as AuthenticatedRequest, res)
+    homeController.search(req as AuthenticatedRequest, res)
 );
 
 export default router;

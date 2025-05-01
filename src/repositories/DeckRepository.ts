@@ -1,6 +1,7 @@
 import { Deck } from '../entities';
 import { BaseRepository } from './BaseRepository';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { ILike, Not } from 'typeorm';
 
 export class DeckRepository extends BaseRepository<Deck> {
     constructor() {
@@ -12,14 +13,47 @@ export class DeckRepository extends BaseRepository<Deck> {
     }
 
     async findByUserId(id: number, limit: number | 'all' = 10): Promise<Deck[]> {
-        if (limit === 'all') return this.findByRelation('author', { id });
-        return this.findByRelation('author', { id }, { take: limit });
+        const options = {
+            relations: {
+                author: true,
+            },
+            where: {
+                author: { id },
+            },
+            select: {
+                author: {
+                    id: true,
+                    email: true,
+                    username: true,
+                    avatar_url: true,
+                },
+            },
+        };
+
+        if (limit !== 'all') {
+            return this.repository.find({
+                ...options,
+                take: limit,
+            });
+        }
+
+        return this.repository.find(options);
     }
 
     async findById(id: string): Promise<Deck | null> {
         return this.repository.findOne({
             where: { id },
-            relations: ['author'],
+            relations: {
+                author: true,
+            },
+            select: {
+                author: {
+                    id: true,
+                    email: true,
+                    username: true,
+                    avatar_url: true,
+                },
+            },
         });
     }
 
@@ -27,15 +61,27 @@ export class DeckRepository extends BaseRepository<Deck> {
         await this.repository.update(id, data);
         return this.findById(id);
     }
-    
+
     async findByKeyword(keyword: string): Promise<Deck[]> {
-        return this.repository
-            .createQueryBuilder("deck")
-            .leftJoinAndSelect("deck.author", "author")
-            .where("LOWER(deck.name) LIKE :keyword", { keyword: `%${keyword.toLowerCase()}%` })
-            .andWhere("deck.visibility != :private", { private: "private" })
-            .orderBy("deck.createdAt", "DESC")
-            .getMany();
+        return this.repository.find({
+            where: {
+                name: ILike(`%${keyword}%`),
+                visibility: Not('private'),
+            },
+            relations: {
+                author: true,
+            },
+            select: {
+                author: {
+                    id: true,
+                    email: true,
+                    username: true,
+                    avatar_url: true,
+                },
+            },
+            order: {
+                createdAt: 'DESC',
+            },
+        });
     }
-    
 }
