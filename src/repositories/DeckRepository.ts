@@ -27,4 +27,15 @@ export class DeckRepository extends BaseRepository<Deck> {
         await this.repository.update(id, data);
         return this.findById(id);
     }
+    
+    async findByKeyword(keyword: string): Promise<Deck[]> {
+        return this.repository
+            .createQueryBuilder("deck")
+            .leftJoinAndSelect("deck.author", "author")
+            .where("LOWER(deck.name) LIKE :keyword", { keyword: `%${keyword.toLowerCase()}%` })
+            .andWhere("deck.visibility != :private", { private: "private" })
+            .orderBy("deck.createdAt", "DESC")
+            .getMany();
+    }
+    
 }

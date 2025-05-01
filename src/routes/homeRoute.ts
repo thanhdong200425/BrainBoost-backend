@@ -3,11 +3,13 @@ import { HomeController } from '../controllers/HomeController';
 import { DeckController } from '../controllers/DeckController';
 import { ProfileController } from '../controllers/ProfileController';
 import { authMiddleware, AuthenticatedRequest } from '../middlewares/authMiddleware';
+import { SearchController } from '../controllers/SearchController';
 
 const router = Router();
 const homeController = new HomeController();
 const deckController = new DeckController();
 const profileController = new ProfileController();
+const searchController = new SearchController();
 
 /**
  * @swagger
@@ -389,6 +391,51 @@ router.put('/profile', authMiddleware, (req: Request, res: Response) =>
  */
 router.put('/change-password', authMiddleware, (req: Request, res: Response) =>
     profileController.changePassword(req as AuthenticatedRequest, res)
+);
+
+/**
+ * @swagger
+ * /api/search:
+ *   get:
+ *     summary: Search for public decks, classes, folders, and users
+ *     tags: [Search]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: keyword
+ *         in: query
+ *         required: true
+ *         description: The search query
+ *         schema:
+ *           type: string
+ *       - name: limit
+ *         in: query
+ *         description: Number of results to return (default: 10)
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Search results retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     decks:
+ *                       type: array
+ *                       items:
+ *       400:
+ *         description: Bad Request - Invalid query parameters
+ *       401:
+ *         description: Unauthorized - Invalid or missing authentication token
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get('/search', authMiddleware, (req: Request, res: Response) =>
+    searchController.search(req as AuthenticatedRequest, res)
 );
 
 export default router;
