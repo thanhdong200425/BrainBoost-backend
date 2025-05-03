@@ -34,4 +34,11 @@ export class FlashcardRepository extends BaseRepository<Flashcard> {
         }
         return this.repository.find(query);
     }
+
+    async countByUserId(userId: number): Promise<number> {
+        return this.repository.createQueryBuilder('flashcard')
+            .innerJoin('flashcard.deck', 'deck')
+            .where('deck.author_id = :userId', { userId })
+            .getCount();
+    }
 }

@@ -1,13 +1,17 @@
+import { FlashcardController } from './../controllers/FlashcardController';
 import { Router, Request, Response } from 'express';
 import { HomeController } from '../controllers/HomeController';
 import { DeckController } from '../controllers/DeckController';
 import { ProfileController } from '../controllers/ProfileController';
+import { FolderController } from '../controllers/FolderController';
 import { authMiddleware, AuthenticatedRequest } from '../middlewares/authMiddleware';
 
 const router = Router();
 const homeController = new HomeController();
 const deckController = new DeckController();
 const profileController = new ProfileController();
+const folderController = new FolderController()
+const flashcardController = new FlashcardController()
 
 /**
  * @swagger
@@ -436,5 +440,15 @@ router.put('/change-password', authMiddleware, (req: Request, res: Response) =>
 router.get('/search', authMiddleware, (req: Request, res: Response) =>
     homeController.search(req as AuthenticatedRequest, res)
 );
+
+
+router.get('/total_folders', authMiddleware, (req: Request, res: Response) =>
+    folderController.getQuantity(req as AuthenticatedRequest, res)
+);
+
+router.get('/total_flashcards', authMiddleware, (req: Request, res: Response) =>
+    flashcardController.getQuantity(req as AuthenticatedRequest, res)
+);
+
 
 export default router;

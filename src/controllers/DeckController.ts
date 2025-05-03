@@ -3,16 +3,13 @@ import { AuthenticatedRequest } from '../middlewares/authMiddleware';
 import { DeckRepository } from '../repositories/DeckRepository';
 import { FlashcardRepository } from '../repositories/FlashcardRepository';
 import { Flashcard } from '../entities';
-import { FolderRepository } from '../repositories/FolderRepository';
 
 export class DeckController {
     private deckRepository: DeckRepository;
     private flashcardRepository: FlashcardRepository;
-    private folderRepository: FolderRepository;
     constructor() {
         this.deckRepository = new DeckRepository();
         this.flashcardRepository = new FlashcardRepository();
-        this.folderRepository = new FolderRepository()
     }
 
     getDecks = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -20,15 +17,9 @@ export class DeckController {
             const userId = req.user.id;
 
             const decks = await this.deckRepository.findByUserId(userId, 'all');
-            const folders = await this.folderRepository.findByUserId(userId, 'all');
-            const folderCount = folders.length;
-            const flashcards = await this.flashcardRepository.findByUserId(userId, 'all');
-            const flashcardCount = flashcards.length;
             res.status(200).json({
                 data: {
                     decks,
-                    folderCount,
-                    flashcardCount
                 },
             });
         } catch (error) {
