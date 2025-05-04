@@ -12,11 +12,11 @@ const options: swaggerJsdoc.Options = {
         },
         servers: [
             {
-                url: 'http://localhost:3002',
+                url: 'http://localhost:3000',
                 description: 'Local development server',
             },
             {
-                url: 'http://brainboost-be:3002',
+                url: 'http://brainboost-be:3000',
                 description: 'Docker container server',
             },
         ],
