@@ -14,4 +14,10 @@ export class FolderRepository extends BaseRepository<Class> {
         if (limit === 'all') return this.findByRelation('author', { id });
         return this.findByRelation('author', { id }, { take: limit });
     }
+
+    async countByUserId(userId: number): Promise<number> {
+        return this.repository.createQueryBuilder('class')
+            .where('class.author_id = :userId', { userId })
+            .getCount();
+    }
 }
