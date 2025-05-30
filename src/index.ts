@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { AppDataSource } from '../ormconfig';
-import { aiRouter, authRouter, homeRouter } from './routes';
+import { aiRouter, authRouter, homeRouter, classRouter, folderRouter } from './routes';
 import { setupSwagger } from './swagger/swagger';
 
 dotenv.config();
@@ -21,6 +21,8 @@ setupSwagger(app);
 app.use('/auth', authRouter);
 app.use('/api', homeRouter);
 app.use('/ai', aiRouter);
+app.use('/api/classes', classRouter);
+app.use('/api', folderRouter);
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello World');
